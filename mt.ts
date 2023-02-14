@@ -112,12 +112,17 @@ class LocalImporter implements IImportable {
     }
 
     loadPlaylist(): string[] {
-        const loaded = JSON.parse(readFileSync(this.resource, 'utf-8'));
-        for(const album of loaded.albums.tracks) {
-            album.forEach((track: string) => {
-                this.loaded.push(track)
-            })
+        const loaded = [JSON.parse(readFileSync(this.resource, 'utf-8')).albums];
+        for(const album of loaded) {
+            for(const song of album) {
+                song.tracks.forEach((track: string) => {
+                    this.loaded.push(track)
+                })
+                // console.log(song.tracks)
+            }
+           
         }
+        // console.log(this.loaded)
         console.log(`Your playlist at location ${this.resource} will be loaded`);
         return this.loaded
     }
@@ -202,34 +207,23 @@ class User {
         return albumNames
     }
 
-    // getPlaylists() {
+    getPlaylists() {
+        let listNames = [];
+        for (const lists of this.playlists) {
+            for (const list in lists.name) {
+                listNames.push(list)
+            }
+        }
+        return listNames
 
-    // }
+    }
 
 
 }
 
 
-// let local = new PlaylistImporter(new LocalImporter('./local.json'));
-// console.log(local.importPlaylist())
-
-// const cloud = new CloudImporter('./local.com');
-// console.log(cloud.importPlaylist())
-
-// let artist = new Artist("Muse");
-// console.log(artist)
-// let album = new Album('2ND LAW', artist, 2012);
-// console.log(album)
-// let song = new Song("Madness");
-// album.addTrack(song)
-// console.log(album)
-
-// let playlist = new Playlist('FUN SONGS');
-// playlist.addAlbum(album)
-// console.log(playlist)
+let local = new PlaylistImporter(new LocalImporter('./local.json'));
+let localpl = local.importPlaylist();
 
 
-// let a = (JSON.parse(readFileSync('./local.json', 'utf-8')))
-// console.log(a.albums)
-let user = new User('john',"afvvbfs")
-console.log(user)
+
